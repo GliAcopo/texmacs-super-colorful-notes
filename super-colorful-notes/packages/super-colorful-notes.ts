@@ -44,13 +44,38 @@
 
   <assign|scn-serious-callouts|true>
 
+  <assign|scn-serious-style|previous>
+
   <use-package|super-colorful-notes-palette>
 
   <\active*>
     <\src-comment>
+      The serious look has two styles. With scn-serious-style "previous"
+      (the default) every element gets back exactly what the other packages
+      (alt-colors, my-notes...) give it; with "black" everything is black
+      and the callout boxes are grey. A family of elements that is turned
+      off always gets back what the other packages give it. The values of
+      the colors set by other packages are kept here, before this package
+      changes them.
+    </src-comment>
+  </active*>
+
+  <provide|scn-plain-strong-color|<value|strong-color>>
+
+  <provide|scn-plain-heading-color|<value|heading-color>>
+
+  <provide|scn-plain-math-color|<value|math-color>>
+
+  <provide|scn-plain-locus-color|<value|locus-color>>
+
+  <provide|scn-plain-visited-color|<value|visited-color>>
+
+  <\active*>
+    <\src-comment>
       Helpers. scn-color gives the color @col when the family @what is on,
-      and otherwise keeps the current color; scn-ink falls back on the
-      serious ink instead.
+      and otherwise keeps the current color. scn-prev gives @col when the
+      family is on, the serious ink in the black serious look, and @prev
+      otherwise; scn-ink is scn-prev with the current color as @prev.
     </src-comment>
   </active*>
 
@@ -58,7 +83,11 @@
 
   <assign|scn-color|<macro|what|col|<if|<scn-active|<arg|what>>|<arg|col>|<value|color>>>>
 
-  <assign|scn-ink|<macro|what|col|<if|<scn-active|<arg|what>>|<arg|col>|<value|scn-serious-ink>>>>
+  <assign|scn-black|<macro|<and|<equal|<value|scn-colorful>|false>|<equal|<value|scn-serious-style>|black>>>>
+
+  <assign|scn-prev|<macro|what|col|prev|<if|<scn-active|<arg|what>>|<arg|col>|<if|<scn-black>|<value|scn-serious-ink>|<arg|prev>>>>>
+
+  <assign|scn-ink|<macro|what|col|<scn-prev|<arg|what>|<arg|col>|<value|color>>>>
 
   <\active*>
     <\src-comment>
@@ -73,7 +102,7 @@
 
   <assign|strong-color|<value|scn-strong-color>>
 
-  <assign|strong|<macro|body|<with|color|<scn-color|scn-inline|<value|strong-color>>|strong-color|<scn-color|scn-inline|<value|strong-color>>|<scn-plain-strong|<arg|body>>>>>
+  <assign|strong|<macro|body|<with|color|<scn-color|scn-inline|<value|strong-color>>|strong-color|<scn-prev|scn-inline|<value|strong-color>|<value|strong-color>>|<scn-plain-strong|<arg|body>>>>>
 
   <provide|scn-plain-em|<value|em>>
 
@@ -105,7 +134,7 @@
 
   <provide|scn-plain-marked|<value|marked>>
 
-  <assign|marked|<macro|body|<with|marked-color|<if|<scn-active|scn-inline>|<value|scn-marked-color>|<value|scn-serious-marked-color>>|<scn-plain-marked|<arg|body>>>>>
+  <assign|marked|<macro|body|<with|marked-color|<if|<scn-active|scn-inline>|<value|scn-marked-color>|<if|<scn-black>|<value|scn-serious-marked-color>|<value|marked-color>>>|<scn-plain-marked|<arg|body>>>>>
 
   <drd-props|strong|arity|1|accessible|all>
 
@@ -126,7 +155,7 @@
     </src-comment>
   </active*>
 
-  <assign|scn-heading|<macro|col|body|<with|color|<scn-ink|scn-headings|<arg|col>>|heading-color|<scn-ink|scn-headings|<arg|col>>|strong-color|<scn-ink|scn-headings|<arg|col>>|<arg|body>>>>
+  <assign|scn-heading|<macro|col|body|<with|color|<scn-ink|scn-headings|<arg|col>>|heading-color|<scn-prev|scn-headings|<arg|col>|<value|scn-plain-heading-color>>|strong-color|<scn-prev|scn-headings|<arg|col>|<value|strong-color>>|<arg|body>>>>
 
   <provide|scn-plain-doc-title-name|<value|doc-title-name>>
 
@@ -221,7 +250,7 @@
 
   <provide|scn-plain-math|<value|math>>
 
-  <assign|math|<macro|x|<with|color|<scn-ink|scn-math|<value|scn-math-color>>|math-color|<scn-ink|scn-math|<value|scn-math-color>>|<scn-plain-math|<arg|x>>>>>
+  <assign|math|<macro|x|<with|color|<scn-ink|scn-math|<value|scn-math-color>>|math-color|<scn-prev|scn-math|<value|scn-math-color>|<value|scn-plain-math-color>>|<scn-plain-math|<arg|x>>>>>
 
   <assign|math-color|<value|scn-math-color>>
 
@@ -236,7 +265,7 @@
 
   <provide|scn-plain-notes-apply-style|<value|notes-apply-style>>
 
-  <assign|scn-callouts-grey|<macro|<and|<not|<equal|<value|scn-colorful>|true>>|<equal|<value|scn-serious-callouts>|true>>>>
+  <assign|scn-callouts-grey|<macro|<and|<scn-black>|<equal|<value|scn-serious-callouts>|true>>>>
 
   <assign|notes-apply-style|<\macro|title-bg|body-bg|title-text|body-text|accent|body>
     <\scn-plain-notes-apply-style|<if|<scn-callouts-grey>|<value|scn-serious-callout-title>|<arg|title-bg>>|<if|<scn-callouts-grey>|<value|scn-serious-callout-body>|<arg|body-bg>>|<if|<scn-callouts-grey>|white|<arg|title-text>>|<if|<scn-callouts-grey>|<value|scn-serious-ink>|<arg|body-text>>|<if|<scn-callouts-grey>|<value|scn-serious-callout-title>|<arg|accent>>>

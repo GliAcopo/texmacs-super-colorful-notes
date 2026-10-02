@@ -27,9 +27,31 @@ look, and PDF files can be exported with that look automatically.
 | Mathematics | `dark red` (as with alt-colors) |
 | Horizontal rules | `#db2777` |
 
-In the serious look everything is black, highlighted text is light grey, and
-the callout boxes of `my-notes` (definitions, theorems, warnings...) all become
-grey.
+The serious look has two styles (*Colorful → Serious look*):
+
+- **Colors of the other packages** (the default): every element gets back
+  exactly what the other packages of the document give it. With `alt-colors`
+  the headings are teal again, bold text dark blue, math dark red, and the
+  `my-notes` boxes keep their colors: the page is pixel for pixel the same as
+  without SuperColorfulNotes.
+- **Black and white**: everything is black, highlighted text is light grey,
+  and the callout boxes of `my-notes` (definitions, theorems, warnings...) all
+  become grey.
+
+Turning off one family of elements (*What to color*) also gives it back what
+the other packages give it.
+
+## Living together with alt-colors
+
+SuperColorfulNotes is meant to come after `alt-colors` in the list of
+packages (the Colorful menu puts it last). In the colorful look it replaces
+the colors of alt-colors for headings, bold text and list labels. alt-colors
+also colors theorem names with `strong-color`: without `my-notes`, they turn
+the bold color of SuperColorfulNotes (with `my-notes`, box titles stay white).
+Math keeps the color of alt-colors by default (`dark red`). The rest of
+alt-colors (framed and alternating colored blocks, blinking) is untouched.
+Removing the package from a document with the Colorful menu also removes the
+values it wrote in the document.
 
 ## Installation
 
@@ -80,7 +102,7 @@ set in *Document → Source* or in the document's preamble, for instance
 variables are listed in `packages/super-colorful-notes-palette.ts` and at the
 top of `packages/super-colorful-notes.ts`. The switches are `scn-colorful`,
 `scn-inline`, `scn-headings`, `scn-lists`, `scn-links`, `scn-math`, `scn-rules`
-and `scn-serious-callouts`.
+and `scn-serious-callouts`, and `scn-serious-style` is `previous` or `black`.
 
 Links, math in displayed equations and bold text inside headings use plain
 TeXmacs variables (`locus-color`, `math-color`, `strong-color`), which the

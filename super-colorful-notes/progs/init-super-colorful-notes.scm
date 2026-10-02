@@ -34,8 +34,22 @@
   (:synopsis "Use SuperColorfulNotes in the current document")
   (:check-mark "v" scn-in-document?)
   (if (scn-in-document?)
-      (remove-style-package scn-package)
+      (begin
+        (scn-forget-document-settings)
+        (remove-style-package scn-package))
       (add-style-package scn-package)))
+
+(define (scn-forget-document-settings)
+  ;; leave no trace of the package in the document's environment
+  (apply init-default
+         (append '("scn-colorful" "scn-inline" "scn-headings" "scn-lists"
+                   "scn-links" "scn-math" "scn-rules" "scn-serious-callouts"
+                   "scn-serious-style" "locus-color" "visited-color"
+                   "math-color" "strong-color")
+                 (scn-color-vars)))
+  ;; the page colors of the dark preset
+  (when (== (get-init-env "bg-color") "#1e1e1e") (init-default "bg-color"))
+  (when (== (get-init-env "color") "#dcddde") (init-default "color")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Switches
@@ -48,23 +62,53 @@
   ;; all switches are "true" in the package, so "on" is the default
   (if on? (init-default var) (init-env var "false")))
 
-(define (scn-sync-one targets source family)
+(define (scn-black?)
+  (and (not (scn-switch-on? "scn-colorful"))
+       (== (get-init-env "scn-serious-style") "black")))
+
+(define (scn-sync-one targets plains source family)
   ;; some colors are plain variables of TeXmacs or of alt-colors (the locus
   ;; color of links, math-color, strong-color), which the package can only
   ;; set once from its own palette: they are set in the document when they
-  ;; must differ from it
-  (let ((on? (or (not family)
-                 (and (scn-switch-on? "scn-colorful") (scn-switch-on? family))))
+  ;; must differ from it. When the family is off (or in the serious look
+  ;; that keeps the other packages' colors) they get back the values they
+  ;; had before the package, which it keeps in scn-plain-...
+  (let ((on? (and (scn-switch-on? "scn-colorful") (scn-switch-on? family)))
         (custom? (init-has? source)))
     (cond ((and on? (not custom?)) (apply init-default targets))
           (on? (for (v targets) (init-env v (get-init-env source))))
-          (else (with ink (or (get-init-env "scn-serious-ink") "black")
-                  (for (v targets) (init-env v ink)))))))
+          ((scn-black?)
+           (with ink (or (get-init-env "scn-serious-ink") "black")
+             (for (v targets) (init-env v ink))))
+          (else
+           (for-each (lambda (v p)
+                       (with old (get-init-env p)
+                         (if (and (string? old) (!= old ""))
+                             (init-env v old)
+                             (init-default v))))
+                     targets plains)))))
 
 (define (scn-sync-links)
-  (scn-sync-one '("locus-color" "visited-color") "scn-link-color" "scn-links")
-  (scn-sync-one '("math-color") "scn-math-color" "scn-math")
-  (scn-sync-one '("strong-color") "scn-strong-color" #f))
+  (scn-sync-one '("locus-color" "visited-color")
+                '("scn-plain-locus-color" "scn-plain-visited-color")
+                "scn-link-color" "scn-links")
+  (scn-sync-one '("math-color") '("scn-plain-math-color")
+                "scn-math-color" "scn-math")
+  (scn-sync-one '("strong-color") '("scn-plain-strong-color")
+                "scn-strong-color" "scn-inline"))
+
+(tm-define (scn-serious-style? style)
+  (== (if (scn-black-style?) "black" "previous") style))
+
+(define (scn-black-style?)
+  (== (get-init-env "scn-serious-style") "black"))
+
+(tm-define (scn-set-serious-style style)
+  (:check-mark "o" scn-serious-style?)
+  (if (== style "black")
+      (init-env "scn-serious-style" "black")
+      (init-default "scn-serious-style"))
+  (scn-sync-links))
 
 (tm-define (scn-colorful?)
   (scn-switch-on? "scn-colorful"))
@@ -415,7 +459,12 @@
         ("Mathematics" (scn-toggle-family "scn-math"))
         ("Horizontal rules" (scn-toggle-family "scn-rules"))
         ---
-        ("Grey boxes in the serious look" (scn-toggle-family "scn-serious-callouts")))
+        ("Grey boxes in the black and white look"
+         (scn-toggle-family "scn-serious-callouts")))
+    (-> "Serious look"
+        ("Colors of the other packages (alt-colors, my-notes...)"
+         (scn-set-serious-style "previous"))
+        ("Black and white" (scn-set-serious-style "black")))
     ---
     (-> "Presets" (link scn-presets-menu))
     (-> "Change colors" (link scn-colors-menu))
