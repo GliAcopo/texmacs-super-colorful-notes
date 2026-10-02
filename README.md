@@ -7,6 +7,10 @@ with a violet line, rainbow headings, colored bullets and numbers, blue links.
 The more color, the more dopamine. One switch gives a serious, black and white
 look, and PDF files can be exported with that look automatically.
 
+![Colorful, serious with the colors of the other packages, black and white](screenshots/colorful-previous-black.png)
+
+Tested with TeXmacs 2.1.4 (Guile 3) and TeXmacs trunk 2.1.5 (Guile 1.8, Qt 5).
+
 ## What is colored
 
 | Element | Default color (Obsidian light theme) |
@@ -56,8 +60,8 @@ values it wrote in the document.
 ## Installation
 
 ```sh
-git clone <this repository> ~/Projects/texmacs-super-colorful-notes
-ln -s ~/Projects/texmacs-super-colorful-notes/super-colorful-notes ~/.TeXmacs/plugins/super-colorful-notes
+git clone https://github.com/GliAcopo/texmacs-super-colorful-notes.git
+ln -s "$PWD/texmacs-super-colorful-notes/super-colorful-notes" ~/.TeXmacs/plugins/super-colorful-notes
 ```
 
 Restart TeXmacs. A **Colorful** menu appears in the menu bar. In a document,
@@ -112,10 +116,21 @@ the document's colors, so use the menu rather than editing `scn-link-color`,
 
 ## Development
 
-Developed with the assistance of Claude Opus 5.5 (Anthropic). Tested with
-TeXmacs 2.1.5 (trunk, Qt 5): every element in both looks, the presets, the
-saved defaults, and the colored pixels of exported PDF files.
+This addon was developed with the assistance of Claude Opus 5.5, an AI model
+by Anthropic, used through Claude Code. The design, the code and the tests
+were reviewed and verified by the author on TeXmacs 2.1.4 and trunk: every
+element in all three looks, the presets, the saved defaults, the colored
+pixels of exported PDF files, and a pixel by pixel comparison showing that the
+serious look with the colors of the other packages is identical to the
+document without the addon.
+
+![Callout boxes and small headings, colorful and black and white](screenshots/boxes-colorful-black.png)
 
 ## License
 
-GPL-3.0-or-later, see `LICENSE`.
+Copyright (C) 2026 Jacopo Rizzuto.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version. See [LICENSE](LICENSE).
