@@ -70,7 +70,8 @@
 
   <\active*>
     <\src-comment>
-      Lists (colors.css), links (colorful-links-tags.css), math and rules.
+      Lists (colors.css), links (colorful-links-tags.css), math, rules,
+      brackets by nesting level and the dots of invisible multiplications.
     </src-comment>
   </active*>
 
@@ -87,6 +88,16 @@
   <assign|scn-math-color|dark red>
 
   <assign|scn-rule-color|#db2777>
+
+  <assign|scn-bracket-1-color|#2563eb>
+
+  <assign|scn-bracket-2-color|#16a34a>
+
+  <assign|scn-bracket-3-color|#dc2626>
+
+  <assign|scn-bracket-4-color|#9333ea>
+
+  <assign|scn-multiply-color|#a0a0ff>
 
   <\active*>
     <\src-comment>

@@ -30,6 +30,15 @@ Tested with TeXmacs 2.1.4 (Guile 3) and TeXmacs trunk 2.1.5 (Guile 1.8, Qt 5).
 | Links and references | `#2563eb` |
 | Mathematics | `dark red` (as with alt-colors) |
 | Horizontal rules | `#db2777` |
+| Brackets by nesting level | `#2563eb`, `#16a34a`, `#dc2626`, `#9333ea` |
+| Dots of invisible multiplications | `#a0a0ff` |
+
+Colored brackets and multiplication dots need a TeXmacs build with the
+`math-bracket-colors` and `math-multiply-mark` variables (branch
+`section-navigator` of [GliAcopo/texmacs](https://github.com/GliAcopo/texmacs),
+see its `CHANGES_MADE_BY_US.md`). Other versions keep plain brackets and
+invisible multiplications. In the serious look the brackets are plain and the
+dots are shown on the screen only, not in the PDF.
 
 The serious look has two styles (*Colorful → Serious look*):
 
@@ -105,11 +114,13 @@ set in *Document → Source* or in the document's preamble, for instance
 `<assign|scn-strong-color|#ff006e>` or `<assign|scn-headings|false>`. The
 variables are listed in `packages/super-colorful-notes-palette.ts` and at the
 top of `packages/super-colorful-notes.ts`. The switches are `scn-colorful`,
-`scn-inline`, `scn-headings`, `scn-lists`, `scn-links`, `scn-math`, `scn-rules`
-and `scn-serious-callouts`, and `scn-serious-style` is `previous` or `black`.
+`scn-inline`, `scn-headings`, `scn-lists`, `scn-links`, `scn-math`, `scn-rules`,
+`scn-brackets`, `scn-multiply` and `scn-serious-callouts`, and `scn-serious-style` is `previous` or `black`.
 
-Links, math in displayed equations and bold text inside headings use plain
-TeXmacs variables (`locus-color`, `math-color`, `strong-color`), which the
+Links, math in displayed equations, bold text inside headings, brackets and
+multiplication dots use plain TeXmacs variables (`locus-color`, `math-color`,
+`strong-color`, `math-nesting-mode`, `math-bracket-colors`,
+`math-multiply-mark`, `math-multiply-color`), which the
 style can only set from the palette. The Colorful menu keeps them in step with
 the document's colors, so use the menu rather than editing `scn-link-color`,
 `scn-math-color` or `scn-strong-color` by hand.

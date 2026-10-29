@@ -43,9 +43,12 @@
   ;; leave no trace of the package in the document's environment
   (apply init-default
          (append '("scn-colorful" "scn-inline" "scn-headings" "scn-lists"
-                   "scn-links" "scn-math" "scn-rules" "scn-serious-callouts"
+                   "scn-links" "scn-math" "scn-rules" "scn-brackets"
+                   "scn-multiply" "scn-serious-callouts"
                    "scn-serious-style" "locus-color" "visited-color"
-                   "math-color" "strong-color")
+                   "math-color" "strong-color" "math-nesting-mode"
+                   "math-bracket-colors" "math-multiply-mark"
+                   "math-multiply-color")
                  (scn-color-vars)))
   ;; the page colors of the dark preset
   (when (== (get-init-env "bg-color") "#1e1e1e") (init-default "bg-color"))
@@ -95,7 +98,31 @@
   (scn-sync-one '("math-color") '("scn-plain-math-color")
                 "scn-math-color" "scn-math")
   (scn-sync-one '("strong-color") '("scn-plain-strong-color")
-                "scn-strong-color" "scn-inline"))
+                "scn-strong-color" "scn-inline")
+  (scn-sync-math-marks))
+
+(define scn-bracket-vars
+  '("scn-bracket-1-color" "scn-bracket-2-color"
+    "scn-bracket-3-color" "scn-bracket-4-color"))
+
+(define (scn-sync-math-marks)
+  ;; colored brackets and multiplication dots are plain variables of the
+  ;; typesetter too; in the serious look the dots stay on the screen only
+  (let ((on? (scn-switch-on? "scn-colorful")))
+    (if (and on? (scn-switch-on? "scn-brackets"))
+        (init-default "math-nesting-mode")
+        (init-env "math-nesting-mode" "off"))
+    (cond ((not (scn-switch-on? "scn-multiply"))
+           (init-env "math-multiply-mark" "off"))
+          (on? (init-default "math-multiply-mark"))
+          (else (init-env "math-multiply-mark" "screen")))
+    (if (list-or (map init-has? scn-bracket-vars))
+        (init-env-tree "math-bracket-colors"
+                       (tm->tree `(tuple ,@(map scn-get scn-bracket-vars))))
+        (init-default "math-bracket-colors"))
+    (if (init-has? "scn-multiply-color")
+        (init-env "math-multiply-color" (get-init-env "scn-multiply-color"))
+        (init-default "math-multiply-color"))))
 
 (tm-define (scn-serious-style? style)
   (== (if (scn-black-style?) "black" "previous") style))
@@ -160,6 +187,12 @@
     ("scn-math-color" "Mathematics")
     ("scn-rule-color" "Horizontal rules")
     "---"
+    ("scn-bracket-1-color" "Brackets, level 1")
+    ("scn-bracket-2-color" "Brackets, level 2")
+    ("scn-bracket-3-color" "Brackets, level 3")
+    ("scn-bracket-4-color" "Brackets, level 4")
+    ("scn-multiply-color" "Invisible multiplications")
+    "---"
     ("scn-serious-ink" "Serious look: ink")
     ("scn-serious-marked-color" "Serious look: highlighter")
     ("scn-serious-callout-title" "Serious look: box titles")
@@ -222,6 +255,9 @@
      ("scn-bullet-3-color" . "#d8bd7c") ("scn-number-color" . "#b197fc")
      ("scn-link-color" . "#74c0fc") ("scn-math-color" . "#66d9ef")
      ("scn-rule-color" . "#ff79c6")
+     ("scn-bracket-1-color" . "#74c0fc") ("scn-bracket-2-color" . "#7ee787")
+     ("scn-bracket-3-color" . "#ff6b6b") ("scn-bracket-4-color" . "#b197fc")
+     ("scn-multiply-color" . "#8b949e")
      ("bg-color" . "#1e1e1e") ("color" . "#dcddde"))
     ("Neon dopamine"
      ("scn-strong-color" . "#e11d48") ("scn-em-color" . "#059669")
@@ -458,6 +494,9 @@
         ("Links and references" (scn-toggle-family "scn-links"))
         ("Mathematics" (scn-toggle-family "scn-math"))
         ("Horizontal rules" (scn-toggle-family "scn-rules"))
+        ("Brackets by nesting level" (scn-toggle-family "scn-brackets"))
+        ("Dots for invisible multiplications"
+         (scn-toggle-family "scn-multiply"))
         ---
         ("Grey boxes in the black and white look"
          (scn-toggle-family "scn-serious-callouts")))

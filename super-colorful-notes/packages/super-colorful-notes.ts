@@ -42,6 +42,10 @@
 
   <assign|scn-rules|true>
 
+  <assign|scn-brackets|true>
+
+  <assign|scn-multiply|true>
+
   <assign|scn-serious-callouts|true>
 
   <assign|scn-serious-style|previous>
@@ -255,6 +259,25 @@
   <assign|math-color|<value|scn-math-color>>
 
   <assign|hrule|<macro|<with|color|<scn-ink|scn-rules|<value|scn-rule-color>>|<scn-plain-strike-through|<htab|5mm>>>>>
+
+  <\active*>
+    <\src-comment>
+      Brackets colored by nesting level, and a dot for the invisible
+      multiplications. Both need a TeXmacs with math-bracket-colors (the
+      local trunk build); another TeXmacs keeps plain brackets, because its
+      math-nesting-mode would color the whole content of the brackets. The
+      Colorful menu turns them off in the document for the serious look,
+      where the dots are still shown on the screen but not printed.
+    </src-comment>
+  </active*>
+
+  <assign|math-nesting-mode|<if|<provides|math-bracket-colors>|brackets|off>>
+
+  <assign|math-bracket-colors|<tuple|<value|scn-bracket-1-color>|<value|scn-bracket-2-color>|<value|scn-bracket-3-color>|<value|scn-bracket-4-color>>>
+
+  <assign|math-multiply-mark|on>
+
+  <assign|math-multiply-color|<value|scn-multiply-color>>
 
   <\active*>
     <\src-comment>
